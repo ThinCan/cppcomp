@@ -11,12 +11,12 @@ try {
     $mail->isSMTP();                                            // Send using SMTP
     $mail->Host       = 'smtp.gmail.com';                    // Set the SMTP server to send through
     $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
-    $mail->Username   = 'kubicki502@gmail.com';                     // SMTP username
-    $mail->Password   = 'qwerTYzxc123';                               // SMTP password
+    $mail->Username   = '';                     // SMTP username
+    $mail->Password   = '';                               // SMTP password
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
     $mail->Port       = 587;
 
-    $mail->setFrom('kubicki502@gmail.com', 'Code Editor');
+    $mail->setFrom('', 'Code Editor');
     $mail->addAddress($_SESSION["email"], 'Client');     // Add a recipient
     $mail->CharSet="UTF-8";
 
