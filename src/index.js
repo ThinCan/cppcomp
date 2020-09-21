@@ -1,75 +1,40 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useState } from "react"
 import ReactDOM from "react-dom"
+import { HashRouter as Router, Route, Switch } from "react-router-dom"
+import { ThemeProvider } from "styled-components"
 
-import * as Axios from "axios"
-import { Button, Toolbar, AppBar, Typography, Switch, FormControlLabel } from "@material-ui/core"
+import Navigation from "./Navigation"
+import LoginForm from "./LoginForm"
+import Compiler from "./Compiler"
+import RegisterForm from "./RegisterForm"
+import CodeList from "./CodeList"
 
-let editor;
+import Styles, { GlobalStyles } from "./styles"
 
-const STYLES = {
-    LIGHT: {
-        backgroundColor: "white",
-        color: "black",
-        editorTheme: "chrome"
-    },
-    DARK: {
-        backgroundColor: "#272822",
-        color: "white",
-        editorTheme: "monokai"
-    }
-}
 
 const App = () => {
-    const output = useRef()
-    const [theme, setTheme] = useState(STYLES.LIGHT)
-
-    useEffect(() => {
-        editor = ace.edit("editor",)
-        editor.setTheme("ace/theme/chrome")
-        editor.session.setMode("ace/mode/c_cpp")
-    }, [])
-    useEffect(() => {
-        editor.setTheme("ace/theme/" + theme.editorTheme)
-        document.getElementsByTagName("body")[0].style.backgroundColor = theme.backgroundColor
-    }, [theme])
-
-    function sendCode() {
-        output.current.value = ""
-        const text = editor.getValue()
-
-        Axios.default.post("/code", { data: text || "" })
-            .then(({ data: { data } }) => {
-                setDrs(true)
-                output.current.value = data || ""
-            })
+    const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+    const toggleTheme = () => {
+        const _theme = theme === "light" ? "dark" : "light"
+        setTheme(_theme);
+        localStorage.setItem("theme", _theme)
     }
-    const [drs, setDrs] = useState(false)
+
 
     return (
-        <div className="app-container">
-            <AppBar >
-                <Toolbar>
-                    <Typography variant="h6">Kompilator C++</Typography>
-                    <Typography variant="h6" style={{ marginLeft: "auto" }}>Karol Kubicki, 4D</Typography>
-                </Toolbar>
-            </AppBar>
-            <main style={{ marginTop: "70px" }}>
-                <div className="editor-controls" style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
-                    <FormControlLabel control={
-                        <Switch color="secondary" onChange={() => setTheme(theme.color === "black" ? STYLES.DARK : STYLES.LIGHT)} />
-                    } label="Ciemny tryb" style={theme} />
-                </div>
-
-                <div className="editor-container" style={{ width: "100%", height: "80vh" }}>
-                    <div id="editor" className="editor"></div>
-                    <textarea className="editor" ref={output} disabled style={theme}></textarea>
-                </div>
-                <Button variant="contained" color="primary" style={{ width: "100%", marginTop: "25px" }} onClick={sendCode}>Kompiluj</Button>
-            </main>
-
-        </div >
+        <ThemeProvider theme={theme === "light" ? Styles.LIGHT : Styles.DARK}>
+            <GlobalStyles />
+            <Router>
+                <Navigation toggleTheme={toggleTheme} />
+                <Switch>
+                    <Route exact path="/"  ><Compiler theme={(theme === "light" ? Styles.LIGHT : Styles.DARK).editorTheme} /></Route>
+                    <Route path="/codelist" component={CodeList} />
+                    <Route path="/login" component={LoginForm} />
+                    <Route path="/register" component={RegisterForm} />
+                </Switch>
+            </Router>
+        </ThemeProvider>
     )
 }
-
 
 ReactDOM.render(<App />, document.getElementById("app"))

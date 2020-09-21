@@ -15,12 +15,15 @@
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "axios": "^0.20.0",
+    "cors": "^2.8.5",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0",
+    "styled-components": "^5.2.0"
   },
   "scripts": {
-    "build": "webpack --mode production",
+    "build": "webpack --mode development",
     "server": "webpack-dev-server --open",
-    "express": "forever start nodemon server/index.js"
+    "express": "forever start server/index.js"
   }
 }

@@ -1,16 +1,16 @@
 const express = require("express")
 const { spawn } = require("child_process")
 const fs = require("fs")
+const cors = require("cors")
 
 const app = express()
 
+app.use(cors())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(express.static(__dirname + "/../public"))
 
-app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/../public/index.html")
-})
+
 app.post("/code", async (req, res) => {
     const code = req.body.data
     if (!code) return
@@ -38,9 +38,7 @@ app.post("/code", async (req, res) => {
             try {
                 fs.unlinkSync(`./server/${fileName}`)
                 fs.unlinkSync(`./server/${fileName.slice(0, -4)}.exe`)
-            } catch (error) {
-                console.log(error)
-            }
+            } catch (error) { console.log(error) }
         })
     })
 })
